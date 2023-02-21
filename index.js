@@ -1,26 +1,33 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const perritoRoutes = require('./routes/todoRoutes'); // importar las rutas de perrito
+const perritoRoutes = require('./routes/todoRoutes'); 
+const mongoose = require('mongoose')
+const axios = require('axios');
+
 
 const app = express();
 
 // Configurar el body-parser
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Conectar a la base de datos MongoDB
-mongoose.connect('mongodb://localhost:27017/miBaseDeDatos', {
+mongoose.set('strictQuery', true)
+require('dotenv').config();
+
+
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Conectado a la base de datos MongoDB');
-}).catch((err) => {
-  console.log('Error al conectar a la base de datos MongoDB:', err);
-});
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch((error) => console.error(error));
+
+
+
 
 // Rutas para los perritos
-app.use('/api/perritos', perritoRoutes);
+app.use('/api',require("./routes/todoRoutes"));
 
 // Manejador de errores
 app.use((err, req, res, next) => {
@@ -29,6 +36,8 @@ app.use((err, req, res, next) => {
 });
 
 // Iniciar el servidor
-app.listen(3000, () => {
-  console.log('Servidor iniciado en el puerto 3000');
+
+const port = 4002
+app.listen(port, () => {
+  console.log('Servidor iniciado en el puerto 4002');
 });
